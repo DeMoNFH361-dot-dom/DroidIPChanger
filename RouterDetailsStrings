@@ -1,0 +1,16 @@
+        wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        if (wifiManager.isWifiEnabled == true) {
+            val wifiInfo = wifiManager.connectionInfo
+            val wifiInfo2: DhcpInfo = wifiManager.dhcpInfo
+            textSsid.setText(res.getString(R.string.stringSSID, wifiInfo.ssid))
+            textBssid.setText(res.getString(R.string.stringBSSID, wifiInfo.bssid))
+            textIPADDRESS.setText(res.getString(R.string.stringWifiIPADDRESS, ipToString(wifiInfo.ipAddress)))
+            textRSSI.setText(res.getString(R.string.stringRSSI, wifiInfo.rssi))
+            textLINKSPEED.setText(res.getString(R.string.stringLINKSPEED, wifiInfo.linkSpeed))
+            textMACADDRESS.setText(res.getString(R.string.stringMACADDRESS, macAddress))
+            textGATEWAY.setText(res.getString(R.string.stringGateway, ipToString(wifiInfo2.gateway)))
+        }
+        else {
+            textSsid.setText(res.getString(R.string.wifiStatusNotConnected))
+        }
+    }
