@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">DroidIpChanger</string>
+    <string name="todo">TODO</string>
+    <string name="stringIPADDRESS">My data IP: %1$s</string>
+    <string name="stringIPADDRESS2">My current IP: %02X</string>
+    <string name="wifiStatusNotConnected">WIFI is not connected</string>
+    <string name="WifiIPCannotBeChanged">Not designed to change WIFI IP, only data IP</string>
+    <string name="connectionInfo">%1$s</string>
+    <string name="wifi_status">WIFI STATUS</string>
+    <string name="stringSSID">SSID: %1$s</string>
+    <string name="stringBSSID">BSSID: %1$s</string>
+    <string name="stringWifiIPADDRESS">IPADDRESS: %1$s</string>
+    <string name="stringRSSI">RSSI: %1$s " dBm"</string>
+    <string name="stringLINKSPEED">LINKSPEED: %1$s " Mbps"</string>
+    <string name="stringMACADDRESS">MAC: %1$s</string>
+    <string name="stringGateway">GATEWAY: %1$s</string>
+
+</resources>
