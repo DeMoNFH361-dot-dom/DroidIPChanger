@@ -1,0 +1,147 @@
+package com.example.droidipinfo
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.DhcpInfo
+import android.net.Uri
+import android.net.wifi.WifiInfo
+import android.net.wifi.WifiManager
+import android.os.Bundle
+import android.util.Log
+import android.widget.ImageButton
+import android.widget.MediaController
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_intro.*
+import java.net.Inet4Address
+import java.net.NetworkInterface
+import java.net.SocketException
+
+@Suppress("DEPRECATION")
+class Intro : AppCompatActivity() {
+
+    lateinit var wifiManager: WifiManager
+    lateinit var connectivityManager: ConnectivityManager
+    lateinit var NewIp: TextView
+
+    var myVariable = 10
+
+    private var position = 0
+    private var mediaController: MediaController? = null
+    private var TAGs = "VideoPlayer"
+    private val DEBUG_TAG = "NetworkStatusAuto"
+
+    @SuppressLint("NewApi")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_intro)
+
+        val MyIp: TextView = findViewById(R.id.MyIp) as TextView
+        val NewIp: TextView = findViewById(R.id.NewIp)
+        val res: Resources = this.resources
+
+        //This is the IP string
+        fun ipToString(i: Int): String {
+            return (i and 0xFF).toString() + "." +
+                    (i shr 8 and 0xFF) + "." +
+                    (i shr 16 and 0xFF) + "." +
+                    (i shr 24 and 0xFF)
+        }
+
+        //Displays the IP and Gateway info in the activity
+        wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        if (wifiManager.isWifiEnabled == false) {
+            val wifiInfo : WifiInfo = wifiManager.connectionInfo
+            val wifiInfo2: DhcpInfo = wifiManager.dhcpInfo
+            MyIp.setText(res.getString(R.string.stringWifiIPADDRESS, ipAddress7))
+            NewIp.setText(res.getString(R.string.wifiStatusNotConnected))
+        } else {
+            val wifiInfo : WifiInfo = wifiManager.connectionInfo
+            val wifiInfo2: DhcpInfo = wifiManager.dhcpInfo
+            NewIp.setText(res.getString(R.string.WifiIPCannotBeChanged))
+            MyIp.setText(res.getString(R.string.stringGateway, ipToString(wifiInfo2.gateway)))
+        }
+
+        connectivityManager =
+            this.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (wifiManager.isWifiEnabled == false) {
+            if (connectivityManager.isDefaultNetworkActive == true) {
+
+            }
+        }
+
+        //Sets the video active
+        introActivityVid.setMediaController(null)
+
+        try {
+            introActivityVid.setMediaController(mediaController)
+            introActivityVid.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + R.raw.introactivityvid))
+        } catch (e: Exception) {
+            Log.e("Error", e.message!!)
+        }
+
+        introActivityVid.requestFocus()
+        introActivityVid.setOnPreparedListener { mp ->
+            mp.isLooping = true
+            Log.i(TAGs, "Duration = " + introActivityVid.duration)
+            introActivityVid.seekTo(position)
+            if (position == 0) {
+                introActivityVid.start()
+            }
+        }
+
+        //Configures the image buttons
+        val helpButton: ImageButton = findViewById(R.id.about) as ImageButton
+        helpButton.setOnClickListener {
+
+            val intent = Intent(this, About::class.java)
+            startActivity(intent)
+        }
+
+        val changeIpButton = findViewById(R.id.changeIP) as ImageButton
+        changeIpButton.setOnClickListener {
+
+            val intent = Intent(this, ChangeIpTutorial::class.java)
+            startActivity(intent)
+        }
+
+        val wifiButton: ImageButton = findViewById(R.id.wifiButton) as ImageButton
+        wifiButton.setOnClickListener {
+
+            val intent = Intent(this, WifiStatus::class.java)
+            startActivity(intent)
+        }
+    }
+
+    //Shows the the data IP Address of the phone
+    val ipAddress7: String
+    get() {
+
+        var ipaddress = ""
+        try {
+            val enumnet = NetworkInterface.getNetworkInterfaces()
+            var netinterface: NetworkInterface
+            while (enumnet.hasMoreElements()) {
+                netinterface = enumnet.nextElement()
+                val enumip = netinterface.inetAddresses
+                while (enumip.hasMoreElements()) {
+                    val inetAddress = enumip.nextElement()
+                    if (inetAddress is Inet4Address)
+                        if (!inetAddress.isLoopbackAddress) {
+
+                            ipaddress = inetAddress.hostAddress
+
+                            break
+                            }
+                        }
+                    }
+            } catch (e: SocketException) {
+                e.printStackTrace()
+                }
+        return ipaddress
+    }
+}
